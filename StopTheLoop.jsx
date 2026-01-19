@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Smartphone, Wallet, Shield } from 'lucide-react';
+import experianLogo from '/logo.png';
 
 const StopTheLoop = () => {
   const [selectedLoop, setSelectedLoop] = useState(null);
@@ -8,17 +10,17 @@ const StopTheLoop = () => {
     {
       id: 1,
       text: "I keep scrolling for answers",
-      icon: "🌀"
+      icon: Smartphone,
     },
     {
       id: 2,
       text: "I worry about money leaks",
-      icon: "💧"
+      icon: Wallet,
     },
     {
       id: 3,
       text: "I don't trust financial systems",
-      icon: "🔒"
+      icon: Shield,
     }
   ];
 
@@ -29,43 +31,80 @@ const StopTheLoop = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F9F9F9] font-sans antialiased">
-      {/* Hero Section */}
-      <section className="px-6 pt-16 pb-12 max-w-2xl mx-auto">
-        <h1 className="text-5xl md:text-6xl font-light text-center text-gray-900 mb-4 tracking-tight">
+    <div className="min-h-screen bg-[#F9F9F9] font-sans antialiased relative overflow-hidden">
+      {/* Subtle Purple Radial Gradient Background */}
+      <div className="absolute inset-0 bg-gradient-radial from-[#7D3F97]/[0.03] via-transparent to-transparent pointer-events-none"></div>
+      
+      {/* Content Wrapper */}
+      <div className="relative z-10">
+      {/* Updated Header with Latest Branding */}
+      <header className="px-5 pt-8 pb-6 mx-auto max-w-md">
+        <div className="flex items-center justify-center gap-4">
+          <img 
+            src={experianLogo} 
+            alt="Experian" 
+            className="h-8 w-auto"
+          />
+          <span className="text-lg font-medium text-[#7D3F97] leading-tight">
+            Your Big Financial Friend (BFF)
+          </span>
+        </div>
+      </header>
+
+      {/* Hero Section - Mobile-First with Generous Spacing */}
+      <section className="px-5 pt-16 pb-10 mx-auto max-w-md">
+        <h1 className="text-[2.75rem] text-center text-gray-900 mb-3 tracking-tight leading-tight">
           Stop the Loop.
         </h1>
-        <p className="text-lg md:text-xl text-center text-gray-600 font-light leading-relaxed">
+        <p className="text-lg text-center text-gray-700 font-light leading-relaxed">
           Your Financial BFF noticed you spiraling.
         </p>
       </section>
 
-      {/* Interactive Loop Selector */}
-      <section className="px-6 pb-12 max-w-2xl mx-auto">
-        <div className="space-y-4">
-          {loopOptions.map((option) => (
-            <button
-              key={option.id}
-              onClick={() => setSelectedLoop(option.id)}
-              className={`w-full min-h-[48px] px-6 py-6 rounded-2xl text-left transition-all duration-500 ease-out
-                ${selectedLoop === option.id 
-                  ? 'bg-white shadow-lg scale-[1.02] border-2 border-gray-200' 
-                  : 'bg-white/50 hover:bg-white hover:shadow-md border-2 border-transparent'
-                }
-              `}
-            >
-              <div className="flex items-center gap-4">
-                <span className="text-2xl">{option.icon}</span>
-                <span className="text-base md:text-lg text-gray-800 font-normal">
-                  {option.text}
-                </span>
-              </div>
-            </button>
-          ))}
+      {/* Horizontal Loop Selector - Mobile-First */}
+      <section className="px-5 pb-10 mx-auto max-w-md">
+        <div className="space-y-3">
+          {loopOptions.map((option) => {
+            const IconComponent = option.icon;
+            return (
+              <motion.button
+                key={option.id}
+                onClick={() => setSelectedLoop(option.id)}
+                whileTap={{ scale: 0.98 }}
+                className={`w-full min-h-[48px] p-5 rounded-[24px] text-left transition-all duration-500 ease-out
+                  ${selectedLoop === option.id 
+                    ? 'bg-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] border-2 border-[#7D3F97]/20' 
+                    : 'bg-white/70 active:bg-white shadow-[0_2px_10px_rgb(0,0,0,0.06)] border-2 border-transparent active:shadow-[0_4px_20px_rgb(0,0,0,0.1)]'
+                  }
+                `}
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-full border border-[#7D3F97] flex items-center justify-center flex-shrink-0">
+                    <IconComponent 
+                      size={20} 
+                      className="text-[#7D3F97]" 
+                      strokeWidth={2.0}
+                    />
+                  </div>
+                  <span className="text-base text-gray-800 font-normal leading-snug flex-1">
+                    {option.text}
+                  </span>
+                  {selectedLoop === option.id && (
+                    <motion.span
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="text-[#7D3F97] text-lg font-bold flex-shrink-0"
+                    >
+                      ✓
+                    </motion.span>
+                  )}
+                </div>
+              </motion.button>
+            );
+          })}
         </div>
       </section>
 
-      {/* Conditional Response - Smooth Transition with Framer Motion */}
       <AnimatePresence mode="wait">
         {selectedLoop && (
           <motion.div
@@ -74,12 +113,12 @@ const StopTheLoop = () => {
             exit={{ opacity: 0, y: -20 }}
             transition={{
               duration: 0.6,
-              ease: [0.22, 1, 0.36, 1], // Custom easing for premium feel
+              ease: [0.22, 1, 0.36, 1], 
             }}
           >
-            {/* Response Message */}
+            {/* Response Message - Mobile-First */}
             <motion.section 
-              className="px-6 pb-8 max-w-2xl mx-auto"
+              className="px-5 pb-6 mx-auto max-w-md"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{
@@ -88,9 +127,9 @@ const StopTheLoop = () => {
                 ease: [0.22, 1, 0.36, 1],
               }}
             >
-              <div className="bg-gradient-to-br from-white to-gray-50 rounded-3xl p-8 md:p-10 shadow-sm border border-gray-100">
+              <div className="bg-gradient-to-br from-white to-gray-50 rounded-3xl p-6 shadow-sm border border-gray-100">
                 <motion.p 
-                  className="text-lg md:text-xl text-gray-700 font-light leading-relaxed mb-6"
+                  className="text-lg text-gray-700 font-light leading-relaxed mb-5"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.5, delay: 0.4 }}
@@ -98,7 +137,7 @@ const StopTheLoop = () => {
                   That makes sense. There's a lot of noise out there.
                 </motion.p>
                 <motion.p 
-                  className="text-lg md:text-xl text-gray-700 font-light leading-relaxed"
+                  className="text-lg text-gray-700 font-light leading-relaxed"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.5, delay: 0.6 }}
@@ -108,9 +147,8 @@ const StopTheLoop = () => {
               </div>
             </motion.section>
 
-            {/* Subtle Tool Intro */}
             <motion.section 
-              className="px-6 pb-10 max-w-2xl mx-auto"
+              className="px-5 pb-8 mx-auto max-w-md"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{
@@ -119,8 +157,8 @@ const StopTheLoop = () => {
                 ease: [0.22, 1, 0.36, 1],
               }}
             >
-              <div className="bg-white/60 rounded-3xl p-8 md:p-10 backdrop-blur-sm">
-                <ul className="space-y-4 mb-6">
+              <div className="bg-white/60 rounded-3xl p-6 backdrop-blur-sm">
+                <ul className="space-y-3 mb-5">
                   {tools.map((tool, index) => (
                     <motion.li 
                       key={index}
@@ -133,8 +171,8 @@ const StopTheLoop = () => {
                         ease: [0.22, 1, 0.36, 1],
                       }}
                     >
-                      <span className="text-green-600 mt-1">✓</span>
-                      <span className="text-base md:text-lg font-normal">{tool}</span>
+                      <span className="text-green-600 mt-0.5">✓</span>
+                      <span className="text-base font-normal leading-snug">{tool}</span>
                     </motion.li>
                   ))}
                 </ul>
@@ -149,9 +187,9 @@ const StopTheLoop = () => {
               </div>
             </motion.section>
 
-            {/* Soft CTA */}
+            {/* Soft */}
             <motion.section 
-              className="px-6 pb-16 max-w-2xl mx-auto"
+              className="px-5 pb-12 mx-auto max-w-md"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{
@@ -161,14 +199,14 @@ const StopTheLoop = () => {
               }}
             >
               <button 
-                className="w-full min-h-[48px] px-8 py-4 bg-gradient-to-r from-gray-800 to-gray-700 text-white rounded-full 
-                  hover:from-gray-700 hover:to-gray-600 transition-all duration-300 ease-out
-                  shadow-md hover:shadow-lg text-base md:text-lg font-normal"
+                className="w-full min-h-[48px] px-6 py-4 bg-gradient-to-r from-gray-800 to-gray-700 text-white rounded-full 
+                  active:from-gray-700 active:to-gray-600 transition-all duration-300 ease-out
+                  shadow-md active:shadow-lg text-base font-normal"
               >
-                Explore with Experian
+                <a href="https://www.experian.com/">Explore with Experian</a>
               </button>
               <motion.p 
-                className="text-center text-sm text-gray-400 mt-4 font-light"
+                className="text-center text-sm text-gray-400 mt-3 font-light"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5, delay: 1.0 }}
@@ -180,7 +218,9 @@ const StopTheLoop = () => {
         )}
       </AnimatePresence>
 
-      <div className="h-20"></div>
+      {/* Breathing Space - Mobile-First */}
+      <div className="h-16"></div>
+      </div>
     </div>
   );
 };

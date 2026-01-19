@@ -12,6 +12,9 @@ module.exports = {
       colors: {
         cream: '#F9F9F9',
       },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(circle at center, var(--tw-gradient-stops))',
+      },
     },
   },
   plugins: [],
