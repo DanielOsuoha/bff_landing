@@ -1,10 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Smartphone, Wallet, Shield } from 'lucide-react';
 import experianLogo from '/logo.png';
 
 const StopTheLoop = () => {
   const [selectedLoop, setSelectedLoop] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Simple loading state
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 300);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Track signal function for pilot analytics
   const trackSignal = (loopId) => {
@@ -62,6 +69,24 @@ const StopTheLoop = () => {
     }
   ];
 
+  // Loading skeleton
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#F9F9F9] font-sans antialiased relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-radial from-[#7D3F97]/[0.03] via-transparent to-transparent pointer-events-none"></div>
+        <div className="relative z-10 flex items-center justify-center min-h-screen">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-[#7D3F97] text-lg font-medium"
+          >
+            Loading...
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#F9F9F9] font-sans antialiased relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-radial from-[#7D3F97]/[0.03] via-transparent to-transparent pointer-events-none"></div>
@@ -86,8 +111,8 @@ const StopTheLoop = () => {
           <h1 className="text-[2.75rem] text-center text-gray-900 mb-3 tracking-tight leading-tight">
             <span className="font-bold text-[#7D3F97]">#</span>Stop the Loop.
           </h1>
-          <p className="text-lg text-center  font-light leading-relaxed">
-            Your Financial BFF noticed you spiraling.
+          <p className="text-lg text-center font-light text-gray-700 leading-relaxed">
+            <i>Stuck in a loop? Your <span className="text-[#7D3F97]"><b>BFF</b></span>'s got you.</i>
           </p>
         </section>
 
@@ -102,6 +127,9 @@ const StopTheLoop = () => {
               <motion.div
                 key={option.id}
                 layout
+                animate={{ 
+                  scale: isExpanded ? 1.01 : 1
+                }}
                 className={`overflow-hidden rounded-[24px] border-2 transition-all duration-500 ease-out
                   ${isExpanded 
                     ? 'bg-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] border-[#7D3F97]/20' 
@@ -112,11 +140,12 @@ const StopTheLoop = () => {
                 {/* Card Header - Always Visible */}
                 <motion.button
                   onClick={() => handleCardClick(option.id)}
+                  whileHover={{ scale: 1.005 }}
                   whileTap={{ scale: 0.98 }}
                   className="w-full min-h-[48px] p-5 text-left"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full border border-[#7D3F97] flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 rounded-full border border-[#7D3F97] flex items-center justify-center flex-shrink-0 transition-colors duration-200 hover:bg-[#7D3F97]/5">
                       <IconComponent 
                         size={20} 
                         className="text-[#7D3F97]" 
@@ -137,7 +166,7 @@ const StopTheLoop = () => {
                 </motion.button>
 
                 {/* Expanded Content - Accordion Style */}
-                <AnimatePresence initial={false}>
+                <AnimatePresence initial={false} mode="wait">
                   {isExpanded && (
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
@@ -158,7 +187,7 @@ const StopTheLoop = () => {
                           transition={{ duration: 0.4, delay: 0.1 }}
                           className="pt-5 pb-4"
                         >
-                          <div className="bg-[#7D3F97]/10 border-l-4 border-[#7D3F97] p-4 rounded-r-lg">
+                          <div className="bg-[#7D3F97]/10 border-l-4 border-[#7D3F97] p-4 rounded-r-lg transition-colors duration-300 active:bg-[#7D3F97]/15">
                             <p className="text-xs font-bold text-[#7D3F97] mb-2">Your BFF says:</p>
                             <p className="text-sm text-gray-800 font-normal leading-relaxed">
                               {option.bffSays}
@@ -201,7 +230,7 @@ const StopTheLoop = () => {
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           transition={{ duration: 0.3, delay: 0.4 }}
-                          className="text-xs text-gray-500 font-light italic text-center mt-4"
+                          className="text-xs text-gray-510 font-light italic text-center mt-6"
                         >
                           Not advice. Just transparency.
                         </motion.p>
@@ -225,17 +254,19 @@ const StopTheLoop = () => {
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.4 }}
           >
-            <a
+            <motion.a
               href="https://www.experian.com/"
               target="_blank"
               rel="noopener noreferrer"
-              className="block w-full min-h-[48px] px-6 py-4 bg-gradient-to-r from-gray-800 to-gray-700 text-white rounded-full 
-                active:from-gray-700 active:to-gray-600 transition-all duration-300 ease-out
-                shadow-md active:shadow-lg text-base font-normal text-center"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="block w-full min-h-[48px] px-6 py-4 bg-[#7D3F97]/10 text-[#7D3F97] border-2 border-[#7D3F97]/20 
+           rounded-full hover:bg-[#7D3F97] hover:text-white 
+           transition-all duration-300 ease-out font-medium text-center"
             >
-              Explore with Experian
-            </a>
-            <p className="text-center text-sm text-gray-400 mt-3 font-light">
+              Continue to Experian
+            </motion.a>
+            <p className="text-center text-sm text-gray-550 mt-3 font-light">
               No pressure. Just options.
             </p>
           </motion.section>
