@@ -1,32 +1,68 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Smartphone, Wallet, Shield } from 'lucide-react';
+import { Smartphone, Wallet, Shield, Share2 } from 'lucide-react';
 import experianLogo from '/logo.png';
 
 const StopTheLoop = () => {
   const [selectedLoop, setSelectedLoop] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Simple loading state
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 300);
     return () => clearTimeout(timer);
   }, []);
 
-  // Track signal function for pilot analytics
+  // Validation Bridge - Check URL parameters for referral tracking
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const source = urlParams.get('source');
+    const loop = urlParams.get('loop');
+
+    if (source === 'referral') {
+      console.log('[PILOT SIGNAL] Trust_Validation: Organic_Referral_Entry', { loop });
+    } else {
+      console.log('[PILOT SIGNAL] Channel_Validation: QR_Entry');
+    }
+  }, []);
+
   const trackSignal = (loopId) => {
     console.log(`Signal tracked: Loop ${loopId} expanded`);
     // In production, this would send to analytics service
     // e.g., analytics.track('loop_expanded', { loopId });
   };
 
-  // Handle card expansion with tracking
   const handleCardClick = (loopId) => {
     if (selectedLoop === loopId) {
-      setSelectedLoop(null); // Collapse if already selected
+      setSelectedLoop(null); 
     } else {
       setSelectedLoop(loopId);
       trackSignal(loopId);
+    }
+  };
+
+  // Social Stickiness - Share functionality
+  const handleShare = async (loopId, loopType) => {
+    console.log('[PILOT SIGNAL] Social_Stickiness: Share_Initiated', { loopId, loopType });
+    
+    const shareUrl = `${window.location.origin}${window.location.pathname}?source=referral&loop=${loopType}`;
+    const shareData = {
+      title: 'Stop the Loop',
+      text: 'Your Financial BFF can help you break the loop.',
+      url: shareUrl
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        // Fallback: Copy to clipboard
+        await navigator.clipboard.writeText(shareUrl);
+        alert('Link copied to clipboard!');
+      }
+    } catch (error) {
+      if (error.name !== 'AbortError') {
+        console.error('Share failed:', error);
+      }
     }
   };
 
@@ -34,9 +70,11 @@ const StopTheLoop = () => {
     {
       id: 1,
       text: "I keep scrolling for answers",
+      loopType: "scrolling",
       icon: Smartphone,
       bffSays: "The internet is full of noise, but your path should be clear. Let's stop guessing and start following your personal roadmap.",
       highlightedTool: "Credit Score Planner",
+      shareCopy: "Know a friend who's stuck scrolling? Share this.",
       tools: [
         { name: "Credit Score Planner", url: "https://www.experian.com/credit/credit-score/" },
         { name: "SmartMoney™", url: "https://www.experian.com/money/experian-smart-money/" },
@@ -46,9 +84,11 @@ const StopTheLoop = () => {
     {
       id: 2,
       text: "I am worrying about money leaks",
+      loopType: "worrying",
       icon: Wallet,
       bffSays: "You work too hard to let your money disappear into the 'subscription void.' Let's find those leaks together right now.",
       highlightedTool: "SmartMoney™",
+      shareCopy: "Help a friend stop the money leaks. Share this.",
       tools: [
         { name: "Credit Score Planner", url: "https://www.experian.com/credit/credit-score/" },
         { name: "SmartMoney™", url: "https://www.experian.com/money/experian-smart-money/" },
@@ -58,9 +98,11 @@ const StopTheLoop = () => {
     {
       id: 3,
       text: "I don't trust financial systems",
+      loopType: "hating",
       icon: Shield,
       bffSays: "The system usually takes from us; it's time it gives back. Let's get you credit for the bills you're already paying.",
       highlightedTool: "Experian Boost™",
+      shareCopy: "Help a friend get credit where it's due. Share this.",
       tools: [
         { name: "Credit Score Planner", url: "https://www.experian.com/credit/credit-score/" },
         { name: "SmartMoney™", url: "https://www.experian.com/money/experian-smart-money/" },
@@ -69,7 +111,6 @@ const StopTheLoop = () => {
     }
   ];
 
-  // Loading skeleton
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#F9F9F9] font-sans antialiased relative overflow-hidden">
@@ -223,6 +264,21 @@ const StopTheLoop = () => {
                               </div>
                             </a>
                           ))}
+                        </motion.div>
+
+                        {/* Share the Loop Button */}
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.4, delay: 0.3 }}
+                        >
+                          <button
+                            onClick={() => handleShare(option.id, option.loopType)}
+                            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-transparent border border-[#7D3F97] rounded-xl text-[#7D3F97] text-xs font-medium hover:bg-[#7D3F97]/5 transition-all duration-200 group"
+                          >
+                            <Share2 size={14} className="group-hover:scale-110 transition-transform" />
+                            {option.shareCopy}
+                          </button>
                         </motion.div>
 
                         {/* Transparency Note */}
